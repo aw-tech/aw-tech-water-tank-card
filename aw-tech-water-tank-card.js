@@ -52,16 +52,13 @@ class AwTechWaterTankCard extends HTMLElement {
   margin: 0; /* Dodaj to, aby usunąć domyślne marginesy */
 }
         .water-tank {
-  display: flex; /* Dodaj to, aby elementy wewnątrz były wyśrodkowane */
-  flex-direction: column; /* Umożliwia pionowe ustawienie elementów */
-  justify-content: center; /* Wyśrodkowanie zawartości w pionie */
-  align-items: center; /* Wyśrodkowanie zawartości w poziomie */
-  width: 20em;
-  height: 30em;
-  border: 0.3em solid #3A3A3A;
-  border-top: none;
-  box-sizing: border-box;
-  position: relative;
+          width: 20em;
+          height: 30em;
+          border: 0.3em solid #3A3A3A;
+          border-top: none;
+          box-sizing: border-box;
+          position: relative;
+        }
 
         .water-tank .liquid {
           width: 100%;
@@ -99,10 +96,6 @@ class AwTechWaterTankCard extends HTMLElement {
         /* Dostosowanie dla mniejszych ekranów */
         @media (max-width: 600px) {
           .water-tank {
-           display: flex; /* Dodaj to, aby elementy wewnątrz były wyśrodkowane */
-  flex-direction: column; /* Umożliwia pionowe ustawienie elementów */
-  justify-content: center; /* Wyśrodkowanie zawartości w pionie */
-  align-items: center; /* Wyśrodkowanie zawartości w poziomie */
             width: 15em;
             height: 22.5em;
           }
