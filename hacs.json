@@ -3,6 +3,6 @@
   "description": "A simple Lovelace card to display water tank temperature at different levels (top, middle, bottom).",
   "render_readme": true,
   "domains": ["lovelace"],
-  "homeassistant": "2024.10.2",
+  "homeassistant": ">=2024.0.0",
   "iot_class": "local_polling"
 }
