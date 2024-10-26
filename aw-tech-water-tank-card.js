@@ -43,6 +43,7 @@ class AwTechWaterTankCard extends HTMLElement {
   render() {
     this.shadowRoot.innerHTML = `
       <style>
+        /* Style karty */
         .water-tank {
           width: 20em;
           height: 30em;
@@ -84,21 +85,6 @@ class AwTechWaterTankCard extends HTMLElement {
         .top-temp { bottom: 85%; }
         .middle-temp { bottom: 50%; }
         .bottom-temp { bottom: 15%; }
-
-        /* Dostosowanie dla mniejszych ekranów */
-        @media (max-width: 600px) {
-          .water-tank {
-            width: 15em;
-            height: 22.5em;
-          }
-          .water-tank .liquid svg {
-            height: 22.5em;
-          }
-          .temperature-label {
-            width: 3em;
-            right: -3.9em;
-          }
-        }
       </style>
       <div class="water-tank">
         <div class="liquid">
