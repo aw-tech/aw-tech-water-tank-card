@@ -96,6 +96,10 @@ class AwTechWaterTankCard extends HTMLElement {
         /* Dostosowanie dla mniejszych ekranów */
         @media (max-width: 600px) {
           .water-tank {
+           display: flex; /* Dodaj to, aby elementy wewnątrz były wyśrodkowane */
+  flex-direction: column; /* Umożliwia pionowe ustawienie elementów */
+  justify-content: center; /* Wyśrodkowanie zawartości w pionie */
+  align-items: center; /* Wyśrodkowanie zawartości w poziomie */
             width: 15em;
             height: 22.5em;
           }
