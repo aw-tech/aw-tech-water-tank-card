@@ -1,28 +1,29 @@
 class AwTechWaterTankCard extends HTMLElement {
   constructor() {
     super();
-    this.attachShadow({ mode: "open" }); // Tylko raz tworzymy shadowRoot
+    if (!this.shadowRoot) {
+      this.attachShadow({ mode: "open" });
+      this.render(); // Tworzymy strukturę HTML tylko raz
+    }
   }
 
   set hass(hass) {
-    const topEntity = this.config.top_entity;
-    const middleEntity = this.config.middle_entity;
-    const bottomEntity = this.config.bottom_entity;
+    const { top_entity, middle_entity, bottom_entity } = this.config;
 
-    if (topEntity && hass.states[topEntity]) {
+    if (top_entity && hass.states[top_entity]) {
       this.shadowRoot.querySelector(
         ".top-temp"
-      ).textContent = `${hass.states[topEntity].state}°C`;
+      ).textContent = `${hass.states[top_entity].state}°C`;
     }
-    if (middleEntity && hass.states[middleEntity]) {
+    if (middle_entity && hass.states[middle_entity]) {
       this.shadowRoot.querySelector(
         ".middle-temp"
-      ).textContent = `${hass.states[middleEntity].state}°C`;
+      ).textContent = `${hass.states[middle_entity].state}°C`;
     }
-    if (bottomEntity && hass.states[bottomEntity]) {
+    if (bottom_entity && hass.states[bottom_entity]) {
       this.shadowRoot.querySelector(
         ".bottom-temp"
-      ).textContent = `${hass.states[bottomEntity].state}°C`;
+      ).textContent = `${hass.states[bottom_entity].state}°C`;
     }
   }
 
@@ -33,7 +34,6 @@ class AwTechWaterTankCard extends HTMLElement {
       );
     }
     this.config = config;
-    this.render(); // Rysowanie interfejsu tylko przy konfiguracji
   }
 
   getCardSize() {
@@ -43,6 +43,7 @@ class AwTechWaterTankCard extends HTMLElement {
   render() {
     this.shadowRoot.innerHTML = `
       <style>
+        /* Style karty */
         .water-tank {
           width: 20em;
           height: 30em;
