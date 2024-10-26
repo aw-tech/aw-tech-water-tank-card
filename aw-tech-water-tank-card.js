@@ -1,15 +1,38 @@
-class AWTechWaterTankCard extends HTMLElement {
-  setConfig(config) {
-    this.config = config;
-    this.attachShadow({ mode: "open" });
+class AwTechWaterTankCard extends HTMLElement {
+  set hass(hass) {
+    if (!this.content) {
+      this.render();
+    }
+
+    // Pobieranie temperatur z atrybutów encji Home Assistant
+    const entityId = this.config.entity;
+    const state = hass.states[entityId];
+    if (state) {
+      this.shadowRoot.querySelector(".top-temp").textContent = `${
+        state.attributes.top_temp || "—"
+      }°C`;
+      this.shadowRoot.querySelector(".middle-temp").textContent = `${
+        state.attributes.middle_temp || "—"
+      }°C`;
+      this.shadowRoot.querySelector(".bottom-temp").textContent = `${
+        state.attributes.bottom_temp || "—"
+      }°C`;
+    }
   }
 
-  set hass(hass) {
-    const entities = this.config.entities || {};
-    const topTemp = hass.states[entities.top];
-    const middleTemp = hass.states[entities.middle];
-    const bottomTemp = hass.states[entities.bottom];
+  setConfig(config) {
+    if (!config.entity) {
+      throw new Error("Musisz określić encję z temperaturami.");
+    }
+    this.config = config;
+  }
 
+  getCardSize() {
+    return 3;
+  }
+
+  render() {
+    this.attachShadow({ mode: "open" });
     this.shadowRoot.innerHTML = `
       <style>
         .water-tank {
@@ -50,9 +73,9 @@ class AWTechWaterTankCard extends HTMLElement {
           background-color: #3A3A3A;
           right: -4.9em;
         }
-        .top-temp { bottom: 80%; }
+        .top-temp { bottom: 85%; }
         .middle-temp { bottom: 50%; }
-        .bottom-temp { bottom: 20%; }
+        .bottom-temp { bottom: 15%; }
       </style>
       <div class="water-tank">
         <div class="liquid">
@@ -72,16 +95,12 @@ class AWTechWaterTankCard extends HTMLElement {
             "/>
           </svg>
         </div>
-        <div class="temperature-label top-temp"></div>
-        <div class="temperature-label middle-temp"></div>
-        <div class="temperature-label bottom-temp"></div>
+        <div class="temperature-label top-temp">—</div>
+        <div class="temperature-label middle-temp">—</div>
+        <div class="temperature-label bottom-temp">—</div>
       </div>
-      `;
-  }
-
-  getCardSize() {
-    return 3;
+    `;
   }
 }
 
-customElements.define("aw-tech-water-tank-card", AWTechWaterTankCard);
+customElements.define("aw-tech-water-tank-card", AwTechWaterTankCard);
