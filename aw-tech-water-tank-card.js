@@ -43,14 +43,6 @@ class AwTechWaterTankCard extends HTMLElement {
   render() {
     this.shadowRoot.innerHTML = `
       <style>
-      body {
-  font-family: sans-serif;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  margin: 0; /* Dodaj to, aby usunąć domyślne marginesy */
-}
         .water-tank {
           width: 20em;
           height: 30em;
