@@ -11,24 +11,71 @@ class AWTechWaterTankCard extends HTMLElement {
     const bottomTemp = hass.states[entities.bottom];
 
     this.shadowRoot.innerHTML = `
-        <style>
-          .tank {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(to top, #0000ff, #ff0000);
-            border-radius: 8px;
-            color: white;
-            text-align: center;
-          }
-          .level {
-            margin: 8px 0;
-          }
-        </style>
-        <div class="tank">
-          <p class="level">Top: ${topTemp ? topTemp.state : "-"} °C</p>
-          <p class="level">Middle: ${middleTemp ? middleTemp.state : "-"} °C</p>
-          <p class="level">Bottom: ${bottomTemp ? bottomTemp.state : "-"} °C</p>
+      <style>
+        .water-tank {
+          width: 20em;
+          height: 30em;
+          border: 0.3em solid #3A3A3A;
+          border-top: none;
+          box-sizing: border-box;
+          position: relative;
+        }
+
+        .water-tank .liquid {
+          width: 100%;
+          height: 100%;
+          position: absolute;
+          overflow: hidden;
+        }
+
+        .water-tank .liquid svg {
+          height: 30em;
+          top: calc(5%);
+          position: absolute;
+          animation: waves 5s infinite linear;
+        }
+
+        @keyframes waves {
+          0% { transform: translateX(-15em); }
+          100% { transform: translateX(0); }
+        }
+
+        .temperature-label {
+          position: absolute;
+          color: white;
+          line-height: 2em;
+          width: 4em;
+          text-align: center;
+          border-radius: 0.5em;
+          background-color: #3A3A3A;
+          right: -4.9em;
+        }
+        .top-temp { bottom: 80%; }
+        .middle-temp { bottom: 50%; }
+        .bottom-temp { bottom: 20%; }
+      </style>
+      <div class="water-tank">
+        <div class="liquid">
+          <svg class="water" viewBox="0 0 200 100">
+            <defs>
+              <linearGradient id="waterGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0" style="stop-color:#29ABE2"/>
+                <stop offset="1" style="stop-color:#0000FF"/>
+              </linearGradient>
+            </defs>
+            <path fill="url(#waterGradient)" d="
+              M 0,0 v 100 h 200 v -100 
+              c -10,0 -15,5 -25,5 c -10,0 -15,-5 -25,-5
+              c -10,0 -15,5 -25,5 c -10,0 -15,-5 -25,-5
+              c -10,0 -15,5 -25,5 c -10,0 -15,-5 -25,-5
+              c -10,0 -15,5 -25,5 c -10,0 -15,-5 -25,-5
+            "/>
+          </svg>
         </div>
+        <div class="temperature-label top-temp"></div>
+        <div class="temperature-label middle-temp"></div>
+        <div class="temperature-label bottom-temp"></div>
+      </div>
       `;
   }
 
