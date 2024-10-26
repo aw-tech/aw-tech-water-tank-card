@@ -1,10 +1,10 @@
 class AwTechWaterTankCard extends HTMLElement {
-  set hass(hass) {
-    if (!this.content) {
-      this.render();
-    }
+  constructor() {
+    super();
+    this.attachShadow({ mode: "open" }); // Tylko raz tworzymy shadowRoot
+  }
 
-    // Pobieranie temperatur z trzech oddzielnych encji Home Assistant
+  set hass(hass) {
     const topEntity = this.config.top_entity;
     const middleEntity = this.config.middle_entity;
     const bottomEntity = this.config.bottom_entity;
@@ -29,10 +29,11 @@ class AwTechWaterTankCard extends HTMLElement {
   setConfig(config) {
     if (!config.top_entity || !config.middle_entity || !config.bottom_entity) {
       throw new Error(
-        "Musisz określić encje dla każdej temperatury (top, middle, bottom)."
+        "Musisz określić encje z temperaturami dla poziomów: góra, środek i dół (top_entity, middle_entity, bottom_entity)."
       );
     }
     this.config = config;
+    this.render(); // Rysowanie interfejsu tylko przy konfiguracji
   }
 
   getCardSize() {
@@ -40,7 +41,6 @@ class AwTechWaterTankCard extends HTMLElement {
   }
 
   render() {
-    this.attachShadow({ mode: "open" });
     this.shadowRoot.innerHTML = `
       <style>
         .water-tank {
