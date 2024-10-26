@@ -1,13 +1,14 @@
-# AW Tech Water Tank Card
+A Lovelace card for displaying water tank temperature at different levels (top, middle, bottom).
 
-This card shows the temperature of a water tank at different levels: top, middle, and bottom.
+### Configuration
 
-## Configuration
+To use this card, specify three temperature sensor entities: `top_entity`, `middle_entity`, and `bottom_entity`.
+
+#### Example configuration
 
 ```yaml
 type: custom:aw-tech-water-tank-card
-entities:
-  top: sensor.water_tank_top
-  middle: sensor.water_tank_middle
-  bottom: sensor.water_tank_bottom
+top_entity: sensor.water_tank_top_temperature
+middle_entity: sensor.water_tank_middle_temperature
+bottom_entity: sensor.water_tank_bottom_temperature
 ```
