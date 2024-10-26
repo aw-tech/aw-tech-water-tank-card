@@ -4,25 +4,33 @@ class AwTechWaterTankCard extends HTMLElement {
       this.render();
     }
 
-    // Pobieranie temperatur z atrybutów encji Home Assistant
-    const entityId = this.config.entity;
-    const state = hass.states[entityId];
-    if (state) {
-      this.shadowRoot.querySelector(".top-temp").textContent = `${
-        state.attributes.top_temp || "—"
-      }°C`;
-      this.shadowRoot.querySelector(".middle-temp").textContent = `${
-        state.attributes.middle_temp || "—"
-      }°C`;
-      this.shadowRoot.querySelector(".bottom-temp").textContent = `${
-        state.attributes.bottom_temp || "—"
-      }°C`;
+    // Pobieranie temperatur z trzech oddzielnych encji Home Assistant
+    const topEntity = this.config.top_entity;
+    const middleEntity = this.config.middle_entity;
+    const bottomEntity = this.config.bottom_entity;
+
+    if (topEntity && hass.states[topEntity]) {
+      this.shadowRoot.querySelector(
+        ".top-temp"
+      ).textContent = `${hass.states[topEntity].state}°C`;
+    }
+    if (middleEntity && hass.states[middleEntity]) {
+      this.shadowRoot.querySelector(
+        ".middle-temp"
+      ).textContent = `${hass.states[middleEntity].state}°C`;
+    }
+    if (bottomEntity && hass.states[bottomEntity]) {
+      this.shadowRoot.querySelector(
+        ".bottom-temp"
+      ).textContent = `${hass.states[bottomEntity].state}°C`;
     }
   }
 
   setConfig(config) {
-    if (!config.entity) {
-      throw new Error("Musisz określić encję z temperaturami.");
+    if (!config.top_entity || !config.middle_entity || !config.bottom_entity) {
+      throw new Error(
+        "Musisz określić encje dla każdej temperatury (top, middle, bottom)."
+      );
     }
     this.config = config;
   }
