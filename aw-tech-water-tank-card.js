@@ -6,6 +6,7 @@ class AwTechWaterTankCard extends HTMLElement {
     const template = document.createElement("template");
     template.innerHTML = `
         <style>
+          /* Style komponentu */
           body {
             font-family: sans-serif;
             display: flex;
@@ -13,7 +14,7 @@ class AwTechWaterTankCard extends HTMLElement {
             justify-content: center;
             min-height: 100vh;
           }
-          
+
           .water-tank {
             width: 20em;
             height: 30em;
@@ -95,10 +96,17 @@ class AwTechWaterTankCard extends HTMLElement {
     this.appendChild(template.content.cloneNode(true));
   }
 
+  // Ustawienia konfiguracji karty
   setConfig(config) {
+    if (!config.top_entity || !config.middle_entity || !config.bottom_entity) {
+      throw new Error(
+        "Musisz określić encje dla top_entity, middle_entity i bottom_entity."
+      );
+    }
     this.config = config;
   }
 
+  // Ustawienie Home Assistant i aktualizacja temperatur
   set hass(hass) {
     const topTemp = hass.states[this.config.top_entity]?.state || "N/A";
     const middleTemp = hass.states[this.config.middle_entity]?.state || "N/A";
