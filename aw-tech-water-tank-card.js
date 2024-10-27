@@ -1,20 +1,33 @@
 class AwTechWaterTankCard extends HTMLElement {
-  constructor() {
-    super();
+  setConfig(config) {
+    if (!config.top_entity || !config.middle_entity || !config.bottom_entity) {
+      throw new Error(
+        "Musisz określić encje dla top_entity, middle_entity i bottom_entity."
+      );
+    }
+    this.config = config;
+  }
 
-    // Tworzenie szablonu HTML
-    const template = document.createElement("template");
-    template.innerHTML = `
+  set hass(hass) {
+    const topTemp = hass.states[this.config.top_entity]?.state || "N/A";
+    const middleTemp = hass.states[this.config.middle_entity]?.state || "N/A";
+    const bottomTemp = hass.states[this.config.bottom_entity]?.state || "N/A";
+
+    // Upewnij się, że temperatury są aktualizowane
+    this.querySelector(".temperature-label.top").textContent = `${topTemp} °C`;
+    this.querySelector(
+      ".temperature-label.middle"
+    ).textContent = `${middleTemp} °C`;
+    this.querySelector(
+      ".temperature-label.bottom"
+    ).textContent = `${bottomTemp} °C`;
+  }
+
+  // Generowanie treści HTML
+  render() {
+    this.innerHTML = `
         <style>
           /* Style komponentu */
-          body {
-            font-family: sans-serif;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-          }
-
           .water-tank {
             width: 20em;
             height: 30em;
@@ -23,26 +36,22 @@ class AwTechWaterTankCard extends HTMLElement {
             box-sizing: border-box;
             position: relative;
           }
-
           .water-tank .liquid {
             width: 100%;
             height: 100%;
             position: absolute;
             overflow: hidden;
           }
-
           .water-tank .liquid svg {
             height: 30em;
             top: calc(5%);
             position: absolute;
             animation: waves 5s infinite linear;
           }
-
           @keyframes waves {
               0% { transform: translateX(-15em); }
               100% { transform: translateX(0); }
           }
-
           .water-tank .temperature-label {
             position: absolute;
             color: white;
@@ -53,19 +62,9 @@ class AwTechWaterTankCard extends HTMLElement {
             background-color: #3A3A3A;
             right: -4.9em;
           }
-
-          .water-tank .temperature-label.top {
-            top: 0.5em;
-          }
-
-          .water-tank .temperature-label.middle {
-            top: 50%;
-            transform: translateY(-50%);
-          }
-
-          .water-tank .temperature-label.bottom {
-            bottom: 0.5em;
-          }
+          .water-tank .temperature-label.top { top: 0.5em; }
+          .water-tank .temperature-label.middle { top: 50%; transform: translateY(-50%); }
+          .water-tank .temperature-label.bottom { bottom: 0.5em; }
         </style>
 
         <div class="water-tank">
@@ -86,43 +85,26 @@ class AwTechWaterTankCard extends HTMLElement {
               "/>
             </svg>
           </div>
-          <div class="temperature-label top"></div>
-          <div class="temperature-label middle"></div>
-          <div class="temperature-label bottom"></div>
+          <div class="temperature-label top">Top: ${
+            this.config?.top_entity || "N/A"
+          }</div>
+          <div class="temperature-label middle">Middle: ${
+            this.config?.middle_entity || "N/A"
+          }</div>
+          <div class="temperature-label bottom">Bottom: ${
+            this.config?.bottom_entity || "N/A"
+          }</div>
         </div>
       `;
-
-    // Dodanie szablonu do komponentu
-    this.appendChild(template.content.cloneNode(true));
-  }
-
-  // Ustawienia konfiguracji karty
-  setConfig(config) {
-    if (!config.top_entity || !config.middle_entity || !config.bottom_entity) {
-      throw new Error(
-        "Musisz określić encje dla top_entity, middle_entity i bottom_entity."
-      );
-    }
-    this.config = config;
-  }
-
-  // Ustawienie Home Assistant i aktualizacja temperatur
-  set hass(hass) {
-    const topTemp = hass.states[this.config.top_entity]?.state || "N/A";
-    const middleTemp = hass.states[this.config.middle_entity]?.state || "N/A";
-    const bottomTemp = hass.states[this.config.bottom_entity]?.state || "N/A";
-
-    this.querySelector(".temperature-label.top").textContent = `${topTemp} °C`;
-    this.querySelector(
-      ".temperature-label.middle"
-    ).textContent = `${middleTemp} °C`;
-    this.querySelector(
-      ".temperature-label.bottom"
-    ).textContent = `${bottomTemp} °C`;
   }
 
   getCardSize() {
     return 3;
+  }
+
+  // Inicjalizacja zawartości
+  connectedCallback() {
+    this.render();
   }
 }
 
