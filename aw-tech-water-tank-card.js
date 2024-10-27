@@ -1,4 +1,9 @@
 class AwTechWaterTankCard extends HTMLElement {
+  constructor() {
+    super();
+    this.isRendered = false; // Flaga informująca o tym, że karta została wyrenderowana
+  }
+
   setConfig(config) {
     if (!config.top_entity || !config.middle_entity || !config.bottom_entity) {
       throw new Error(
@@ -9,26 +14,26 @@ class AwTechWaterTankCard extends HTMLElement {
   }
 
   set hass(hass) {
-    // Sprawdź, czy elementy DOM są już dostępne
-    const topLabel = this.querySelector(".temperature-label.top");
-    const middleLabel = this.querySelector(".temperature-label.middle");
-    const bottomLabel = this.querySelector(".temperature-label.bottom");
-
-    if (topLabel && middleLabel && bottomLabel) {
+    // Sprawdź, czy elementy DOM są dostępne po pełnym renderowaniu
+    if (this.isRendered) {
       const topTemp = hass.states[this.config.top_entity]?.state || "N/A";
       const middleTemp = hass.states[this.config.middle_entity]?.state || "N/A";
       const bottomTemp = hass.states[this.config.bottom_entity]?.state || "N/A";
 
-      topLabel.textContent = `${topTemp} °C`;
-      middleLabel.textContent = `${middleTemp} °C`;
-      bottomLabel.textContent = `${bottomTemp} °C`;
+      // Zaktualizuj etykiety temperatury, jeśli są dostępne
+      const topLabel = this.querySelector(".temperature-label.top");
+      const middleLabel = this.querySelector(".temperature-label.middle");
+      const bottomLabel = this.querySelector(".temperature-label.bottom");
+
+      if (topLabel) topLabel.textContent = `${topTemp} °C`;
+      if (middleLabel) middleLabel.textContent = `${middleTemp} °C`;
+      if (bottomLabel) bottomLabel.textContent = `${bottomTemp} °C`;
     }
   }
 
   render() {
     this.innerHTML = `
         <style>
-          /* Style komponentu */
           .water-tank {
             width: 20em;
             height: 30em;
@@ -86,11 +91,12 @@ class AwTechWaterTankCard extends HTMLElement {
               "/>
             </svg>
           </div>
-          <div class="temperature-label top"></div>
-          <div class="temperature-label middle"></div>
-          <div class="temperature-label bottom"></div>
+          <div class="temperature-label top">Top: </div>
+          <div class="temperature-label middle">Middle: </div>
+          <div class="temperature-label bottom">Bottom: </div>
         </div>
       `;
+    this.isRendered = true; // Ustawienie flagi po zakończeniu renderowania
   }
 
   connectedCallback() {
