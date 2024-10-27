@@ -1,114 +1,120 @@
 class AwTechWaterTankCard extends HTMLElement {
   constructor() {
     super();
-    if (!this.shadowRoot) {
-      this.attachShadow({ mode: "open" });
-      this.render(); // Tworzymy strukturę HTML tylko raz
-    }
-  }
 
-  set hass(hass) {
-    const { top_entity, middle_entity, bottom_entity } = this.config;
+    // Tworzenie szablonu HTML
+    const template = document.createElement("template");
+    template.innerHTML = `
+        <style>
+          body {
+            font-family: sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+          }
+          
+          .water-tank {
+            width: 20em;
+            height: 30em;
+            border: 0.3em solid #3A3A3A;
+            border-top: none;
+            box-sizing: border-box;
+            position: relative;
+          }
 
-    if (top_entity && hass.states[top_entity]) {
-      this.shadowRoot.querySelector(
-        ".top-temp"
-      ).textContent = `${hass.states[top_entity].state}°C`;
-    }
-    if (middle_entity && hass.states[middle_entity]) {
-      this.shadowRoot.querySelector(
-        ".middle-temp"
-      ).textContent = `${hass.states[middle_entity].state}°C`;
-    }
-    if (bottom_entity && hass.states[bottom_entity]) {
-      this.shadowRoot.querySelector(
-        ".bottom-temp"
-      ).textContent = `${hass.states[bottom_entity].state}°C`;
-    }
+          .water-tank .liquid {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            overflow: hidden;
+          }
+
+          .water-tank .liquid svg {
+            height: 30em;
+            top: calc(5%);
+            position: absolute;
+            animation: waves 5s infinite linear;
+          }
+
+          @keyframes waves {
+              0% { transform: translateX(-15em); }
+              100% { transform: translateX(0); }
+          }
+
+          .water-tank .temperature-label {
+            position: absolute;
+            color: white;
+            line-height: 2em;
+            width: 4em;
+            text-align: center;
+            border-radius: .5em;
+            background-color: #3A3A3A;
+            right: -4.9em;
+          }
+
+          .water-tank .temperature-label.top {
+            top: 0.5em;
+          }
+
+          .water-tank .temperature-label.middle {
+            top: 50%;
+            transform: translateY(-50%);
+          }
+
+          .water-tank .temperature-label.bottom {
+            bottom: 0.5em;
+          }
+        </style>
+
+        <div class="water-tank">
+          <div class="liquid">
+            <svg class="water" viewBox="0 0 200 100">
+              <defs>
+                <linearGradient id="waterGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0" style="stop-color:#29ABE2"/>
+                  <stop offset="1" style="stop-color:#0000FF"/>
+                </linearGradient>
+              </defs>
+              <path fill="url(#waterGradient)" d="
+                M 0,0 v 100 h 200 v -100 
+                c -10,0 -15,5 -25,5 c -10,0 -15,-5 -25,-5
+                c -10,0 -15,5 -25,5 c -10,0 -15,-5 -25,-5
+                c -10,0 -15,5 -25,5 c -10,0 -15,-5 -25,-5
+                c -10,0 -15,5 -25,5 c -10,0 -15,-5 -25,-5
+              "/>
+            </svg>
+          </div>
+          <div class="temperature-label top"></div>
+          <div class="temperature-label middle"></div>
+          <div class="temperature-label bottom"></div>
+        </div>
+      `;
+
+    // Dodanie szablonu do komponentu
+    this.appendChild(template.content.cloneNode(true));
   }
 
   setConfig(config) {
-    if (!config.top_entity || !config.middle_entity || !config.bottom_entity) {
-      throw new Error(
-        "Musisz określić encje z temperaturami dla poziomów: góra, środek i dół (top_entity, middle_entity, bottom_entity)."
-      );
-    }
     this.config = config;
+  }
+
+  set hass(hass) {
+    const topTemp = hass.states[this.config.top_entity]?.state || "N/A";
+    const middleTemp = hass.states[this.config.middle_entity]?.state || "N/A";
+    const bottomTemp = hass.states[this.config.bottom_entity]?.state || "N/A";
+
+    this.querySelector(".temperature-label.top").textContent = `${topTemp} °C`;
+    this.querySelector(
+      ".temperature-label.middle"
+    ).textContent = `${middleTemp} °C`;
+    this.querySelector(
+      ".temperature-label.bottom"
+    ).textContent = `${bottomTemp} °C`;
   }
 
   getCardSize() {
     return 3;
-  }
-
-  render() {
-    this.shadowRoot.innerHTML = `
-      <style>
-        /* Style karty */
-        .water-tank {
-          width: 20em;
-          height: 30em;
-          border: 0.3em solid #3A3A3A;
-          border-top: none;
-          box-sizing: border-box;
-          position: relative;
-        }
-
-        .water-tank .liquid {
-          width: 100%;
-          height: 100%;
-          position: absolute;
-          overflow: hidden;
-        }
-
-        .water-tank .liquid svg {
-          height: 30em;
-          top: calc(5%);
-          position: absolute;
-          animation: waves 5s infinite linear;
-        }
-
-        @keyframes waves {
-          0% { transform: translateX(-15em); }
-          100% { transform: translateX(0); }
-        }
-
-        .temperature-label {
-          position: absolute;
-          color: white;
-          line-height: 2em;
-          width: 4em;
-          text-align: center;
-          border-radius: 0.5em;
-          background-color: #3A3A3A;
-          right: -4.9em;
-        }
-        .top-temp { bottom: 85%; }
-        .middle-temp { bottom: 50%; }
-        .bottom-temp { bottom: 15%; }
-      </style>
-      <div class="water-tank">
-        <div class="liquid">
-          <svg class="water" viewBox="0 0 200 100">
-            <defs>
-              <linearGradient id="waterGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0" style="stop-color:#29ABE2"/>
-                <stop offset="1" style="stop-color:#0000FF"/>
-              </linearGradient>
-            </defs>
-            <path fill="url(#waterGradient)" d="
-              M 0,0 v 100 h 200 v -100 
-              c -10,0 -15,5 -25,5 c -10,0 -15,-5 -25,-5
-              c -10,0 -15,5 -25,5 c -10,0 -15,-5 -25,-5
-              c -10,0 -15,5 -25,5 c -10,0 -15,-5 -25,-5
-              c -10,0 -15,5 -25,5 c -10,0 -15,-5 -25,-5
-            "/>
-          </svg>
-        </div>
-        <div class="temperature-label top-temp">—</div>
-        <div class="temperature-label middle-temp">—</div>
-        <div class="temperature-label bottom-temp">—</div>
-      </div>
-    `;
   }
 }
 
