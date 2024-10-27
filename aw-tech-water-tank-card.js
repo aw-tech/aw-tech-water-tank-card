@@ -9,21 +9,22 @@ class AwTechWaterTankCard extends HTMLElement {
   }
 
   set hass(hass) {
-    const topTemp = hass.states[this.config.top_entity]?.state || "N/A";
-    const middleTemp = hass.states[this.config.middle_entity]?.state || "N/A";
-    const bottomTemp = hass.states[this.config.bottom_entity]?.state || "N/A";
+    // Sprawdź, czy elementy DOM są już dostępne
+    const topLabel = this.querySelector(".temperature-label.top");
+    const middleLabel = this.querySelector(".temperature-label.middle");
+    const bottomLabel = this.querySelector(".temperature-label.bottom");
 
-    // Upewnij się, że temperatury są aktualizowane
-    this.querySelector(".temperature-label.top").textContent = `${topTemp} °C`;
-    this.querySelector(
-      ".temperature-label.middle"
-    ).textContent = `${middleTemp} °C`;
-    this.querySelector(
-      ".temperature-label.bottom"
-    ).textContent = `${bottomTemp} °C`;
+    if (topLabel && middleLabel && bottomLabel) {
+      const topTemp = hass.states[this.config.top_entity]?.state || "N/A";
+      const middleTemp = hass.states[this.config.middle_entity]?.state || "N/A";
+      const bottomTemp = hass.states[this.config.bottom_entity]?.state || "N/A";
+
+      topLabel.textContent = `${topTemp} °C`;
+      middleLabel.textContent = `${middleTemp} °C`;
+      bottomLabel.textContent = `${bottomTemp} °C`;
+    }
   }
 
-  // Generowanie treści HTML
   render() {
     this.innerHTML = `
         <style>
@@ -85,26 +86,19 @@ class AwTechWaterTankCard extends HTMLElement {
               "/>
             </svg>
           </div>
-          <div class="temperature-label top">Top: ${
-            this.config?.top_entity || "N/A"
-          }</div>
-          <div class="temperature-label middle">Middle: ${
-            this.config?.middle_entity || "N/A"
-          }</div>
-          <div class="temperature-label bottom">Bottom: ${
-            this.config?.bottom_entity || "N/A"
-          }</div>
+          <div class="temperature-label top"></div>
+          <div class="temperature-label middle"></div>
+          <div class="temperature-label bottom"></div>
         </div>
       `;
   }
 
-  getCardSize() {
-    return 3;
-  }
-
-  // Inicjalizacja zawartości
   connectedCallback() {
     this.render();
+  }
+
+  getCardSize() {
+    return 3;
   }
 }
 
